@@ -6,22 +6,42 @@
 <body>
 <canvas id="c" width="800" height="600"></canvas>
 <script id="vertex-shader" type="x-shader/x-vertex">
-    const vec2 madd = vec2(0.5, 0.5);
     attribute vec4 a_position;
     
-    varying vec2 textureCoord;
     void main() {
-      textureCoord = a_position.xy * madd+madd;
       gl_Position = a_position;
     } 
 </script>
 <script id="fragment-shader" type="x-shader/x-fragment">
     precision highp float;
 
-    varying vec2 textureCoord;
+    {{ sdf_function }}
+
+    const vec2 resolution = vec2(800.0, 600.0);
 
     void main() {
-        gl_FragColor = vec4(textureCoord.x, textureCoord.y, 0.0, 1.0);
+        // get frag coordinates
+        vec2 uv = ( gl_FragCoord.xy / resolution.xy ) * 2.0 - 1.0;
+        // keep aspect ratio
+        uv.x *= resolution.x / resolution.y;
+
+        // camera position and ray direction
+        vec3 pos = vec3(0., 0., -3.);
+        vec3 dir = normalize(vec3(uv, 1.));
+
+        // ray march
+        vec3 ip;
+
+        float t = 0.0;
+        for(int i=0; i<32; i++) {
+            ip = pos + dir * t;
+            float temp = sdf(ip);
+            if (temp < 0.01) break;
+            t += temp;
+        }
+
+        //gl_FragColor = vec4(textureCoord.x, textureCoord.y, 0.0, 1.0);
+        gl_FragColor = vec4(ip, 1.0);
     }
 </script>
 <script type="text/javascript">
