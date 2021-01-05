@@ -5,17 +5,19 @@
 </head>
 <body>
 <canvas id="c" width="800" height="600"></canvas>
-<script id="vertex-shader" type="x-shader/x-vertex">
-    attribute vec4 a_position;
+<script id="vertex-shader" type="x-shader/x-vertex">#version 300 es
+    in vec4 a_position;
     
     void main() {
       gl_Position = a_position;
     } 
 </script>
-<script id="fragment-shader" type="x-shader/x-fragment">
+<script id="fragment-shader" type="x-shader/x-fragment">#version 300 es
     precision highp float;
 
-    {{ sdf_function }}
+    out vec4 fragColor;
+
+    {{ sdf_function|safe }}
 
     const vec2 resolution = vec2(800.0, 600.0);
 
@@ -40,8 +42,7 @@
             t += temp;
         }
 
-        //gl_FragColor = vec4(textureCoord.x, textureCoord.y, 0.0, 1.0);
-        gl_FragColor = vec4(ip, 1.0);
+        fragColor = vec4(ip, 1.0);
     }
 </script>
 <script type="text/javascript">
