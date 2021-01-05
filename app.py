@@ -91,6 +91,29 @@ def compile(exp, this_var):
             result = compile(exp.args[1], this_var)
             return f"float {result} = sqrt({arg});\n"
 
+        elif exp.operator == "Abs":
+            assert len(exp.args) == 2
+            arg = compile(exp.args[0], this_var)
+            assert isinstance(exp.args[1], Variable)
+            result = compile(exp.args[1], this_var)
+            return f"float {result} = abs({arg});\n"
+
+        elif exp.operator == "Max":
+            assert len(exp.args) == 3
+            lhs = compile(exp.args[0], this_var)
+            rhs = compile(exp.args[1], this_var)
+            assert isinstance(exp.args[2], Variable)
+            result = compile(exp.args[2], this_var)
+            return f"float {result} = max({lhs}, {rhs});\n"
+
+        elif exp.operator == "Min":
+            assert len(exp.args) == 3
+            lhs = compile(exp.args[0], this_var)
+            rhs = compile(exp.args[1], this_var)
+            assert isinstance(exp.args[2], Variable)
+            result = compile(exp.args[2], this_var)
+            return f"float {result} = min({lhs}, {rhs});\n"
+
         elif exp.operator == "Geq":
             assert len(exp.args) == 2
             lhs = compile(exp.args[0], this_var)

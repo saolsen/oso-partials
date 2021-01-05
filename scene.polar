@@ -5,32 +5,28 @@
 # max(a,b)
 # sign(f)
 
-# abs is a glsl builtin and could use that
-abs(x,ax) if x >= 0.0 and ax = x;
-abs(x,ax) if x < 0.0 and ax = x * -1.0;
-abs(x,y,z,ax,ay,az) if
-    abs(x,ax) and
-    abs(y,ay) and
-    abs(z,az);
+?= 1 = min(1.0,2.0);
+?= 2 = max(1.0,2.0);
 
-min(x,y,ans) if x <= y and ans = x;
-min(x,y,ans) if x > y and ans = y;
-min(ax,ay,az,bx,by,bz,mx,my,mz) if
-    min(ax,bx,mx) and
-    min(ay,by,my) and
-    min(az,bz,mz);
+absv(x,y,z,ax,ay,az) if
+    ax = abs(x) and
+    ay = abs(y) and
+    az = abs(z);
 
-max(x,y,ans) if x >= y and ans = x;
-max(x,y,ans) if x < y and ans = y;
-max(ax,ay,az,bx,by,bz,mx,my,mz) if
-    max(ax,bx,mx) and
-    max(ay,by,my) and
-    max(az,bz,mz);
+minv(ax,ay,az,bx,by,bz,mx,my,mz) if
+    mx = min(ax,bx) and
+    my = min(ay,by) and
+    mz = min(az,bz);
 
-?= max(
-    1,3,1,
-    4,-2,1,
-    4,3,1);
+maxv(ax,ay,az,bx,by,bz,mx,my,mz) if
+    mx = max(ax,bx) and
+    my = max(ay,by) and
+    mz = max(az,bz);
+
+?= maxv(
+    1.0,3.0,1.0,
+    4.0,-2.0,1.0,
+    4.0,3.0,1.0);
 
 sub(ax,ay,az,bx,by,bz,rx,ry,rz) if
     rx = ax - bx and
@@ -38,13 +34,13 @@ sub(ax,ay,az,bx,by,bz,rx,ry,rz) if
     rz = az - bz;
 
 box(x,y,z,bx,by,bz,ans) if
-    abs(x,y,z,ax,ay,az) and
+    absv(x,y,z,ax,ay,az) and
     sub(ax,ay,az,bx,by,bz,qx,qy,qz) and
-    max(qx,qy,qz,0.0,0.0,0.0,mqx,mqy,mqz) and
+    maxv(qx,qy,qz,0.0,0.0,0.0,mqx,mqy,mqz) and
     len(mqx,mqy,mqz,l) and
-    max(qy,qz,m) and
-    max(qx,m,mm) and
-    min(mm,0.0,mmm) and
+    m = max(qy,qz) and
+    mm = max(qx,m) and
+    mmm = min(mm,0.0) and
     ans = l + mmm;
 
 sdf(x,y,z,ans) if box(x,y,z,1.0,1.0,1.0,ans);
