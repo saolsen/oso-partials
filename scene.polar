@@ -54,22 +54,22 @@ sphere(x, y, z, cx, cy, cz, radius, ans) if
     len(ox,oy,oz, l) and
     ans = l - radius;
 
-doublesphere(x, y, z, cx, cy, cz, radius, ans) if
-    sub(x,y,z,cx,cy,cz,ox,oy,oz) and
-    # ox = x - cx and
-    # oy = y - cy and
-    # oz = z - cz and
-    len(ox,oy,oz, l) and
-    ans_a = l - radius and
-    sub(x,y,z,cx+1.0,cy+1.0,cz+1.0,obx,oby,obz) and
-    # obx = x - cx+1.0 and
-    # oby = y - cy+1.0 and
-    # obz = z - cz+1.0 and
-    len(obx,oby,obz, lb) and
-    ans_b = lb - radius and
-    ans = min(ans_a, ans_b);
+# doublesphere(x, y, z, cx, cy, cz, radius, ans) if
+#     sub(x,y,z,cx,cy,cz,ox,oy,oz) and
+#     # ox = x - cx and
+#     # oy = y - cy and
+#     # oz = z - cz and
+#     len(ox,oy,oz, l) and
+#     ans_a = l - radius and
+#     sub(x,y,z,cx+1.0,cy+1.0,cz+1.0,obx,oby,obz) and
+#     # obx = x - cx+1.0 and
+#     # oby = y - cy+1.0 and
+#     # obz = z - cz+1.0 and
+#     len(obx,oby,obz, lb) and
+#     ans_b = lb - radius and
+#     ans = min(ans_a, ans_b);
 
-#sdf(x,y,z,ans) if doublesphere(x,y,z,1.0,1.0,0.0,1.25,ans);
+# sdf(x,y,z,ans) if doublesphere(x,y,z,1.0,1.0,0.0,1.25,ans);
 
 # sdf(x,y,z,ans) if
 #     ox = x - 1.0 and
