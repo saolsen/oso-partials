@@ -15,21 +15,32 @@
 <script id="fragment-shader" type="x-shader/x-fragment">#version 300 es
     precision highp float;
 
+    uniform vec3 camera_position;
+
     out vec4 fragColor;
 
     {{ sdf_function|safe }}
 
     const vec2 resolution = vec2(800.0, 600.0);
 
+    mat3 look_at(vec3 eye, vec3 center, vec3 up) {
+        vec3 f = normalize(center - eye);
+        vec3 s = normalize(cross(f, up));
+        vec3 u = cross(s, f);
+        return mat3(s, u, -f);
+    }
+
     void main() {
         // get frag coordinates
         vec2 uv = ( gl_FragCoord.xy / resolution.xy ) * 2.0 - 1.0;
         // keep aspect ratio
         uv.x *= resolution.x / resolution.y;
+        vec3 dir = normalize(vec3(uv, -1.));
 
-        // camera position and ray direction
-        vec3 pos = vec3(0., 0., -3.);
-        vec3 dir = normalize(vec3(uv, 1.));
+        mat3 transform = look_at(camera_position, vec3(0.0,0.0,0.0), vec3(0.0,1.0,0.0));
+        dir = transform * dir;
+
+        vec3 pos = camera_position;
 
         // ray march
         vec3 ip;
@@ -46,6 +57,12 @@
     }
 </script>
 <script type="text/javascript">
+    const width = 800;
+    const height = 600;
+
+    let mousedown = false;
+    let mouse_pos = {x: 0, y: 0}
+
     function createShaderFromScriptElement(gl, id, kind) {
         let source = document.getElementById(id).innerHTML;
         let shader = gl.createShader(kind);
@@ -55,6 +72,31 @@
     }
 
     const canvas = document.getElementById('c');
+    canvas.addEventListener('click', function(event) {
+        mouse_pos.x = event.x - width/2.0;
+        mouse_pos.y = (height - event.y) - height/2.0;
+        //console.log(mouse_pos);
+    });
+    canvas.addEventListener('mousedown', function(event) {
+        mousedown = true;
+        //console.log("mousedown");
+    });
+    canvas.addEventListener('mouseup', function(event) {
+        mousedown = false;
+        //console.log("mouseup");
+    });
+    // Yeah this is broken but who cares.
+    canvas.addEventListener('mouseout', function(event) {
+        mousedown = false;
+        //console.log("mouseout");
+    });
+    canvas.addEventListener('mousemove', function(event) {
+        if (mousedown) {
+            mouse_pos.x = event.x - width/2.0;
+            mouse_pos.y = (height - event.y) - height/2.0;
+            //console.log(mouse_pos);
+        }
+    });
     
     const gl = canvas.getContext("webgl2");
     console.assert(gl != null);
@@ -108,9 +150,29 @@
     gl.bufferData(gl.ARRAY_BUFFER, vertex_data, gl.STATIC_DRAW);
     gl.enableVertexAttribArray(position_location);
     gl.vertexAttribPointer(position_location, 2, gl.FLOAT, false, 0, 0);
+
+    var camera = gl.getUniformLocation(program, "camera_position");
+
+    function render() {
+        let x = (mouse_pos.x / width) * 4;
+        let y = (mouse_pos.y / height) * 4;
+        // this is like -0.5 to 0.5, p chill
+
+        let camera_x = Math.cos(x);
+        let camera_z = Math.sin(x);
+        let camera_y = y * -1;
+        let mag = Math.sqrt(camera_x * camera_x + camera_y * camera_y + camera_z * camera_z);
+        camera_x = (camera_x / mag) * 6;
+        camera_z = (camera_z / mag) * 6;
+        camera_y = (camera_y / mag) * 6;
+
+        gl.uniform3f(camera, camera_x,camera_y,camera_z);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        requestAnimationFrame(render);
+    }
+    requestAnimationFrame(render);
     
-    // draw
-    gl.drawArrays(gl.TRIANGLES, 0, 6);
 </script>
 </body>
 </html>

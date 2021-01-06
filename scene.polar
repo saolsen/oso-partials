@@ -33,6 +33,8 @@ sub(ax,ay,az,bx,by,bz,rx,ry,rz) if
     ry = ay - by and
     rz = az - bz;
 
+len(x, y, z, ans) if ans = sqrt(x*x + y*y + z*z);
+
 box(x,y,z,bx,by,bz,ans) if
     absv(x,y,z,ax,ay,az) and
     sub(ax,ay,az,bx,by,bz,qx,qy,qz) and
@@ -45,16 +47,20 @@ box(x,y,z,bx,by,bz,ans) if
 
 sdf(x,y,z,ans) if box(x,y,z,1.0,1.0,1.0,ans);
 
-# The sdf function returns the distance from a point x,y,z to a surface.
-len(x, y, z, ans) if ans = sqrt(x*x + y*y + z*z);
-
 sphere(x, y, z, cx, cy, cz, radius, ans) if
     sub(x,y,z,cx,cy,cz,ox,oy,oz) and
     len(ox,oy,oz, l) and
     ans = l - radius;
 
-#sdf(x,y,z,ans) if sphere(x,y,z,1.0,1.0,0.0,1.25,ans);
-#sdf(x,y,z,ans) if sphere(x,y,z,-1.0,1.0,0.0,1.25,ans);
+difference(a,b,ans) if ans = max(a, b * -1.0);
+
+# sdf(x,y,z,ans) if
+#     sphere(x,y,z,0.0,0.0,0.0,1.25,s_ans) and
+#     box(x,y,z,1.0,1.0,1.0,b_ans) and
+#     difference(s_ans, b_ans, ans);
+
+# sdf(x,y,z,ans) if sphere(x,y,z,1.0,1.0,0.0,1.25,ans);
+# sdf(x,y,z,ans) if sphere(x,y,z,-1.0,1.0,0.0,1.25,ans);
 
 # sdf(x,y,z,ans) if x < 0.0 and ans = 1.0;
 # sdf(x,y,z,ans) if x >= 0.0 and ans = 2.0;

@@ -146,7 +146,7 @@ def compile(exp, this_var):
 
 app = Flask(__name__)
 
-print("compiling")
+print("compiling polar")
 oso = Oso()
 oso.load_file("scene.polar")
 
@@ -154,6 +154,7 @@ results = list(
     oso.query_rule("sdf", Variable("x"), Variable("y"), Variable("z"), Variable("ans"))
 )
 expressions = [result["bindings"] for result in results]
+print("compiling glsl")
 sdf_function = compile_sdf(expressions)
 print(sdf_function)
 
